@@ -154,18 +154,20 @@ def plotcritic(parser):
         )
 
     # make sure we can create the new website for the project name
-    if os.path.exists(args.project):
-        sys.exit(
-            "project directory already exists."
-            + " Remove it or change project name before continuing."
-        )
+    # if os.path.exists(args.project):
+    #     sys.exit(
+    #         "project directory already exists."
+    #         + " Remove it or change project name before continuing."
+    #     )
 
     # copy the templates for the web site
-    shutil.copytree(get_templates(), args.project)
+    shutil.copytree(get_templates(), args.project, dirs_exist_ok=True)
 
     # add the images to the website
     config_data["image_data"] = []
-    os.makedirs(os.path.join(args.project, "imgs/"))
+    images_dir = os.path.join(args.project, "imgs/")
+    if not os.path.exists(images_dir):
+        os.makedirs(images_dir)
     copy_images(args.images_dir, config_data, parser)
 
     # create environment JS file

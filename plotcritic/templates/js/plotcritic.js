@@ -21,17 +21,18 @@ app.controller("svCtrl", function($scope, $rootScope, $timeout, $http, $window, 
 	$scope.user = '';
 	$scope.image_data = __env.config.image_data;
 	$scope.currentImageIdx = 0;
-  $scope.currentImage = "";
+    $scope.currentImage = "";
 	$scope.reachedEnd = false;
 	$scope.reachedStart = false;
 	$scope.load_time;
 	$scope.project = __env.config.projectName;
-	$scope.signedIn = false;
+	$scope.user = $cookies.get('user');
+	$scope.signedIn = false; // ($scope.user !== undefined); //false;
 	$scope.curationQuestion = __env.config.curationQandA.question;
 	$scope.curationAnswers = [];
 	$scope.additionalCurationItems = __env.config.additionalCuration;
 	$scope.additionalCurationResponses = {};
-  $scope.config = __env.config;
+    $scope.config = __env.config;
 	$scope.selectedScore = false;
 
 	for (key in __env.config.curationQandA.answers) {
@@ -57,26 +58,25 @@ app.controller("svCtrl", function($scope, $rootScope, $timeout, $http, $window, 
     $scope.$apply();
   });
 
+    // So it does not trigger the events bound to other keyboard
+    // shortcuts when typing in the comment box.
+	$scope.handleCommentKeydown = function(event) {
+	  event.stopPropagation();
+	};
+
 	var init = function() {
 		// Sign user in and store token
   	$scope.signedIn = true;
   	$cookies.put('user',$scope.user);
 
     //shuffle images and display first one
-    $scope.image_data = shuffleArray($scope.image_data);
-		$scope.currentImageIdx = 0;
+    $scope.image_data = $scope.image_data;
+
+    // var storedCurrentImageIdx = $cookies.get('currentImageIdx');
+	// $scope.currentImageIdx = storedCurrentImageIdx !== undefined ? parseInt(storedCurrentImageIdx) : 0; //0;
+	$scope.currentImageIdx = 0;
     $scope.currentImage = $scope.image_data[$scope.currentImageIdx]["img_location"];
     $scope.load_time = Date.now();
-	};
-
-	var shuffleArray = function (arr) {
-	    for (var i = arr.length - 1; i > 0; i--) {
-	        var j = Math.floor(Math.random() * (i + 1));
-	        var temp = arr[i];
-	        arr[i] = arr[j];
-	        arr[j] = temp;
-	    }
-	    return arr;
 	};
 
 	var resetCurrent = function (change) {
@@ -94,18 +94,20 @@ app.controller("svCtrl", function($scope, $rootScope, $timeout, $http, $window, 
 		}
 	};
 
-  $scope.saveScore = function(option){
+  $scope.saveScore = function(option, comment){
   	var now = Date.now();
   	$scope.image_data[$scope.currentImageIdx]['score'] = option;
+  	$scope.image_data[$scope.currentImageIdx]['comment'] = comment;
     $scope.image_data[$scope.currentImageIdx]['response_time'] = now;
     $scope.image_data[$scope.currentImageIdx]['load_time'] = $scope.load_time;
-		$scope.image_data[$scope.currentImageIdx]['user'] = $scope.user;
-		$scope.image_data[$scope.currentImageIdx]['project'] = $scope.project;
+	$scope.image_data[$scope.currentImageIdx]['user'] = $scope.user;
+	$scope.image_data[$scope.currentImageIdx]['project'] = $scope.project;
     var rawBlob = new Blob([JSON.stringify($scope.image_data)], {
       type: 'application/json',
       name: "report"
     });
     $scope.rawReport = (window.URL || window.webkitURL).createObjectURL( rawBlob);
+    $scope.comment = "";
     $scope.next();
   };
 
@@ -160,11 +162,6 @@ app.controller("svCtrl", function($scope, $rootScope, $timeout, $http, $window, 
 			$cookies.remove('user');
 			$window.location.reload();
 	};
-
-	$scope.user = $cookies.get('user');
-	if ($scope.user !== undefined) {
-		$scope.submit();
-	}
 });
 app.config(['$compileProvider',
     function ($compileProvider) {

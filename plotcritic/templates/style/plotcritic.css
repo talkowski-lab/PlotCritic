@@ -84,6 +84,15 @@
     margin: 1px 0px 0px 1px;
 }
 
+.comment_box {
+    border: none;
+    padding: 1% 5%;
+    font-size: 1em;
+    cursor: pointer;
+    border: 1px solid black;
+    margin: 1px 0px 0px 1px;
+}
+
 .good_button {
     /*margin-left: 25%;*/
     background-color: #008CBA;

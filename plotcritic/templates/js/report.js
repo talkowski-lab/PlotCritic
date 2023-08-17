@@ -140,6 +140,7 @@ app.controller("svCtrl", function($scope, $rootScope, $timeout, $http, $window, 
 		    		fields_to_show = [score_item['user'],
 		    							score_item['Image'],
 		    							score_item['score'].toString(),
+		    							score_item['comment'],
 		    							score_item['load_time'].toString(),
 		    							score_item['response_time'].toString(),
 		    							score_item['project']];

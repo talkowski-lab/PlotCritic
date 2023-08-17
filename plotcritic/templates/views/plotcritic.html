@@ -57,8 +57,10 @@
 
 				</div>
 			    <div class="button_box" ng-class="currentImage">
-            <button type="button" class="score_button" ng-repeat="answer in curationAnswers" ng-click=saveScore(answer[0])>{{answer[1]}} ({{answer[0]}})</button>
+            <button type="button" class="score_button" ng-repeat="answer in curationAnswers" ng-click="saveScore(answer[0], comment)">{{answer[1]}} ({{answer[0]}})</button>
 						<p ng-show="selectedScore">You selected: <em>{{selectedScore}} </em></p>
+
+					<input type="text" class="comment_box" ng-model="comment" placeholder="Enter comment" ng-keydown="handleCommentKeydown($event)">
 				</div>
 			</div>
 
@@ -84,4 +86,4 @@
 	</div>
 	<script src="../js/plotcritic.js"></script>
 </body>
-</html
+</html>
